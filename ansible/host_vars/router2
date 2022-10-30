@@ -1,0 +1,13 @@
+frr_hostname: router2
+eth1_description: r1-r2
+eth1_ip: 10.0.10.2/30
+eth2_description: r2-r3
+eth2_ip: 10.0.11.2/30
+eth3_description: net_router2
+eth3_ip: 192.168.20.1/24
+router_id: 1.1.1.2
+ospf_net_1: 10.0.10.0/30
+ospf_net_2: 10.0.11.0/30
+ospf_net_3: 192.168.20.0/24
+ospf_nb_1: 10.0.10.1
+ospf_nb_2: 10.0.11.1

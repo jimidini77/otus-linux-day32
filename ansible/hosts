@@ -1,0 +1,4 @@
+[routers]
+router1  ansible_host=192.168.56.101 ansible_port=22 ansible_private_key_file=.vagrant/machines/router1/virtualbox/private_key
+router2  ansible_host=192.168.56.102 ansible_port=22 ansible_private_key_file=.vagrant/machines/router2/virtualbox/private_key
+router3  ansible_host=192.168.56.103 ansible_port=22 ansible_private_key_file=.vagrant/machines/router3/virtualbox/private_key

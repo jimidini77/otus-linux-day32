@@ -1,0 +1,71 @@
+---
+- name: OSPF
+  hosts: all
+  become: yes
+  vars_files:
+    - defaults/main.yml
+  tasks:
+    - name: Install FRR RPM repo
+      yum:
+        name: https://rpm.frrouting.org/repo/frr-stable-repo-1-0.el7.noarch.rpm
+        state: present
+        validate_certs: no
+
+    - name: install base tools
+      yum:
+        name:
+          - vim
+          - traceroute
+          - tcpdump
+          - net-tools
+          - frr 
+          - frr-pythontools
+        state: present
+        update_cache: true
+        validate_certs: no
+
+    - name: Persistent forwarding enable
+      lineinfile:
+        line: "net.ipv4.ip_forward = 1"
+        path: /etc/sysctl.conf
+
+    - name: Persistent Reverse Path Filtering enable
+      lineinfile:
+        line: "net.ipv4.conf.all.rp_filter = 0"
+        path: /etc/sysctl.conf
+
+    - name: Enable forwarding across routers
+      sysctl:
+        name: net.ipv4.conf.all.forwarding
+        value: '1'
+        state: present
+
+    - name: Enable Reverse Path Filtering across routers
+      sysctl:
+        name: net.ipv4.conf.all.rp_filter
+        value: '0'
+        state: present
+
+
+    - name: Enable ospfd
+      replace:
+        path: /etc/frr/daemons
+        regexp: '^ospfd=.*$'
+        replace: 'ospfd=yes'
+      notify: restart frr
+
+    - name: Copy frr config to router
+      template:
+        src: frr.conf
+        dest: /etc/frr/frr.conf
+        owner: frr
+        group: frr
+        mode: 0640
+      notify: restart frr
+
+  handlers:
+    - name: restart frr
+      systemd:
+        name: frr
+        state: restarted
+        enabled: yes
