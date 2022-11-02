@@ -14,7 +14,6 @@
     - name: install base tools
       yum:
         name:
-          - vim
           - traceroute
           - tcpdump
           - net-tools
@@ -26,13 +25,16 @@
 
     - name: Persistent forwarding enable
       lineinfile:
-        line: "net.ipv4.ip_forward = 1"
+        line: "net.ipv4.ip_forward=1"
         path: /etc/sysctl.conf
 
     - name: Persistent Reverse Path Filtering enable
       lineinfile:
-        line: "net.ipv4.conf.all.rp_filter = 0"
+        line: "net.ipv4.conf.{{ item }}.rp_filter=0"
         path: /etc/sysctl.conf
+      with_items:
+        - "eth1"
+        - "eth2"
 
     - name: Enable forwarding across routers
       sysctl:
@@ -42,9 +44,12 @@
 
     - name: Enable Reverse Path Filtering across routers
       sysctl:
-        name: net.ipv4.conf.all.rp_filter
+        name: "net.ipv4.conf.{{ item }}.rp_filter"
         value: '0'
         state: present
+      with_items:
+        - "eth1"
+        - "eth2"
 
 
     - name: Enable ospfd
