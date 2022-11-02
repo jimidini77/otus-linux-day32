@@ -34,14 +34,6 @@ MACHINES = {
       {ip: '192.168.56.103', adapter: 5}
     ]
   },
-  
-  :master => {
-    :box_name => "centos/7",
-    :vm_name => "master",
-    :net => [
-      {ip: '192.168.56.100', adapter: 2}
-    ]
-  },
 }
 
 Vagrant.configure("2") do |config|
@@ -67,17 +59,6 @@ Vagrant.configure("2") do |config|
       SHELL
 
       case boxname.to_s
-      when "master"
-        box.vm.provision "shell", run: "always", inline: <<-SHELL
-          sed -i 's/^PasswordAuthentication.*$/PasswordAuthentication yes/' /etc/ssh/sshd_config && systemctl restart sshd.service
-          yum install -y epel-release
-          yum install -y ansible
-          mkdir /study/
-          chmod g+w /study/
-          gpasswd -a vagrant root          
-          SHELL
-      # when "inetRouter2"
-      #   box.vm.network "forwarded_port", guest:8080, host: 8080
       when "router3"
         box.vm.provision "ansible" do |ansible|
           ansible.playbook = "ansible/provision.yml"
